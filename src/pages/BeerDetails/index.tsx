@@ -1,7 +1,10 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { Feather } from '@expo/vector-icons'
 import { StyleSheet, Image, ScrollView, Dimensions } from 'react-native'
 import MapView, { Marker, PROVIDER_GOOGLE } from 'react-native-maps';
+import { useRoute } from '@react-navigation/native';
+
+import api from '../../services/api';
 
 import mapStyleDark from '../../utils/map-dark-mode'
 
@@ -20,30 +23,72 @@ import {
   RoutesText,
 } from './styles';
 
+interface BeerDetailsRouteParams {
+  id: number;
+}
+
+interface Provider {
+  id: string;
+  name: string;
+  description: string;
+  address: string;
+  latitude: number;
+  longitude: number;
+  images: Array<{
+    id: number;
+    url: string;
+  }>
+
+}
 
 const BeerDetails = () => {
+  const [provider, setProvider] = useState<Provider>()
+
+  const route = useRoute()
+  const params = route.params as BeerDetailsRouteParams
+
+  useEffect(() => {
+    api.get(`providers/${params.id}`).then(response => {
+      setProvider(response.data)
+      console.log(params.id)
+      console.log(response.data)
+    })
+  }, [params.id])
+
+  if (!provider) {
+    return (
+      <Container>
+        <Description>Carregando...</Description>
+      </Container>
+    )
+  }
+
   return (
     <Container>
-     
-
       <ImagesContainer>
         <ScrollView horizontal pagingEnabled>
-          <Image style={styles.image} source={{ uri: 'https://www.spub.com.br/wp-content/uploads/elementor/thumbs/6b17a3a3-9ec3-4298-b73d-1285e81e58bd-oopbxwc40bfgzei592g6i52xh9jblre6ylq91laxco.jpg' }} />
-          <Image style={styles.image} source={{ uri: 'https://www.spub.com.br/wp-content/uploads/elementor/thumbs/Studio-Pub-Pizza01-ooiiwmetr7rntfwdb0txj5qi8whccxjhhcc5zop36g.jpg' }} />
-          <Image style={styles.image} source={{ uri: 'https://www.spub.com.br/wp-content/uploads/elementor/thumbs/StudioPub-Drink01--ooiiwp8cbpvis9s9uk1t8n0w123g00uohqamfikwns.jpg' }} />
+          {provider.images.map(image => {
+            return (
+              <Image 
+              key={image.id}
+              style={styles.image} 
+              source={{ uri: image.url }} 
+              />
+            )
+          })}
         </ScrollView>
       </ImagesContainer>
 
       <DetailsContainer>
-        <Title>Studio Pub Belém</Title>
-        <Description>Presta assistência a crianças de 06 a 15 anos que se encontre em situação de risco e/ou vulnerabilidade social.</Description>
+        <Title>{provider.name}</Title>
+        <Description>{provider.description}</Description>
 
         <AddressContainer style={{
           borderBottomWidth: 1,
           borderBottomColor: "#282828",
         }} >
           <Feather name="map-pin" size={24} color="#ffc000" />
-          <Addresss>R. Pres. Pernambuco, 277 - Batista Campos, Belém - PA, 66015-200</Addresss>
+          <Addresss>{provider.address}</Addresss>
         </AddressContainer>
 
         <MapContainer>
@@ -51,8 +96,8 @@ const BeerDetails = () => {
             customMapStyle={mapStyleDark}
             provider={PROVIDER_GOOGLE}
             initialRegion={{
-              latitude: -27.2092052,
-              longitude: -49.6401092,
+              latitude: provider.latitude,
+              longitude: provider.longitude,
               latitudeDelta: 0.008,
               longitudeDelta: 0.008,
             }} 
@@ -65,8 +110,8 @@ const BeerDetails = () => {
             <Marker 
               icon={mapMarkerImg}
               coordinate={{ 
-                latitude: -27.2092052,
-                longitude: -49.6401092
+                latitude: provider.latitude,
+                longitude: provider.longitude,
               }}
             />
           </MapView>

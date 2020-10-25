@@ -45,8 +45,8 @@ const BeerList = () => {
 
   const navigation = useNavigation()
 
-  function handleNavigateToBeerDetails() {
-    navigation.navigate('BeerDetails')
+  function handleNavigateToBeerDetails(id: number) {
+    navigation.navigate('BeerDetails', { id })
   }
 
   return (
@@ -86,7 +86,7 @@ const BeerList = () => {
       >
       {providers.map(provider => {
         return (
-          <CardContent  key={provider.id} onPress={handleNavigateToBeerDetails}>
+          <CardContent  key={provider.id} onPress={() => handleNavigateToBeerDetails(provider.id)}>
             <View 
               style={{ 
                 width: 2, 
