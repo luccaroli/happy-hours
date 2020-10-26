@@ -50,8 +50,6 @@ const BeerDetails = () => {
   useEffect(() => {
     api.get(`providers/${params.id}`).then(response => {
       setProvider(response.data)
-      console.log(params.id)
-      console.log(response.data)
     })
   }, [params.id])
 

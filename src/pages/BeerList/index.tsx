@@ -31,6 +31,10 @@ interface Provider {
   avatar: string;
   beer: string;
   hours: string
+  week_days: Array<{
+    id: number;
+    day: number;
+  }>
 }
 
 const BeerList = () => {
