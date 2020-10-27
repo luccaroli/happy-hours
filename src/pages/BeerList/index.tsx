@@ -1,6 +1,6 @@
 import React, {useEffect, useState} from 'react';
 import { useNavigation } from '@react-navigation/native'
-import { Feather, Ionicons } from '@expo/vector-icons'
+import { Feather, Ionicons, Entypo } from '@expo/vector-icons'
 import { View, StyleSheet } from 'react-native'
 import RNPickerSelect from 'react-native-picker-select';
 
@@ -23,6 +23,8 @@ import {
   CardTitleContainer,
   SelectContainer,
   InputContainer,
+  MapIconContainer,
+  MapIconText,
 } from './styles';
 
 interface Provider {
@@ -51,6 +53,10 @@ const BeerList = () => {
 
   function handleNavigateToBeerDetails(id: number) {
     navigation.navigate('BeerDetails', { id })
+  }
+
+  function handleNavigateToBeerMap() {
+    navigation.navigate('BeerMap')
   }
 
   return (
@@ -132,6 +138,12 @@ const BeerList = () => {
         )
       })}
       </CardContainer>
+      
+      <MapIconContainer onPress={handleNavigateToBeerMap}>
+        <MapIconText>Mapa</MapIconText>
+        <Entypo name="map" size={20} color="#fff" />
+      </MapIconContainer>
+
     </Container>
   )
 }

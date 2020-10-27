@@ -80,3 +80,20 @@ export const CardHourDescription = styled.Text`
 export const CardInfoContainer = styled.View`
 
 `
+export const MapIconContainer = styled(RectButton)`
+  flex-direction: row;
+  align-items: center;
+  justify-content: center;
+  border-radius: 24px;
+  padding: 14px;
+  width: 120px;
+  background: #282828;
+  margin-bottom: 18px;
+  opacity: 0.8;
+`
+export const MapIconText = styled.Text`
+  font-family: 'Poppins_600SemiBold';
+  color: #fff;
+  margin-right: 8px;
+  
+`

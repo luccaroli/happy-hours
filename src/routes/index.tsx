@@ -6,6 +6,7 @@ import Landing from '../pages/Landing';
 import BeerList from '../pages/BeerList';
 import BeerDetails from '../pages/BeerDetails';
 import Header from '../components/Header';
+import BeerMap from '../pages/BeerMap';
 
 const { Navigator, Screen } = createStackNavigator()
 
@@ -20,6 +21,8 @@ const routes = () => {
         >
           <Screen name="Landing" component={Landing} />
           <Screen name="BeerList" component={BeerList} />
+          <Screen name="BeerMap" component={BeerMap} />
+
           <Screen 
             name="BeerDetails" 
             component={BeerDetails} 

@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { Feather } from '@expo/vector-icons'
-import { StyleSheet, Image, ScrollView, Dimensions } from 'react-native'
+import { StyleSheet, Image, ScrollView, Dimensions, View } from 'react-native'
 import MapView, { Marker, PROVIDER_GOOGLE } from 'react-native-maps';
 import { useRoute } from '@react-navigation/native';
 
@@ -55,9 +55,9 @@ const BeerDetails = () => {
 
   if (!provider) {
     return (
-      <Container>
+      <View style={{ alignItems: 'center', justifyContent: 'center' }}>
         <Description>Carregando...</Description>
-      </Container>
+      </View>
     )
   }
 

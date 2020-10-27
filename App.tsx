@@ -6,7 +6,7 @@ import { useFonts } from 'expo-font'
 
 import { Poppins_800ExtraBold, Poppins_400Regular, Poppins_600SemiBold } from '@expo-google-fonts/poppins'
 import { Archivo_700Bold, Archivo_400Regular } from '@expo-google-fonts/archivo'
-import { RobotoSlab_400Regular } from '@expo-google-fonts/roboto-slab'
+import { RobotoSlab_400Regular, RobotoSlab_700Bold } from '@expo-google-fonts/roboto-slab'
 
 export default function App() {
   const [fontsLoaded] = useFonts({
@@ -16,6 +16,7 @@ export default function App() {
     Archivo_700Bold,
     Archivo_400Regular,
     RobotoSlab_400Regular,
+    RobotoSlab_700Bold,
   })
 
   if (!fontsLoaded) {
@@ -26,7 +27,7 @@ export default function App() {
   return (
     <>
       <Routes />
-      <StatusBar style="dark" />
+      <StatusBar translucent style="auto" />
     </>
   );
 }
