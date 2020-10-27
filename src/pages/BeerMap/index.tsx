@@ -17,9 +17,20 @@ import {
   ListIconText,
   CalloutImage,
 } from './styles'
+import api from '../../services/api'
+
+interface Providers {
+  id: number;
+  name: string;
+  latitude: number;
+  longitude: number;
+  avatar: string;
+}
 
 const BeerMap: React.FC = () => {
+  const [providers, setProviders] = useState<Providers[]>([])
   const [initialPosition, setInitialPosition] = useState<[number, number]>([0, 0])
+  const navigation = useNavigation()
 
 
   useEffect(() => {
@@ -43,11 +54,15 @@ const BeerMap: React.FC = () => {
     loandPosition()
   }, [])
 
-  const navigation = useNavigation()
-
   function handleGoBack() {
     navigation.goBack()
   }
+
+  useEffect(() => {
+    api.get('providers').then(response => {
+      setProviders(response.data)
+    })
+  }, [])
 
   return (
     <Container>
@@ -64,24 +79,29 @@ const BeerMap: React.FC = () => {
           longitudeDelta: 0.008,
         }}
       > 
-        <Marker  
-          icon={mapMarkerImg}
-          coordinate={{
-            latitude: -1.430311,
-            longitude: -48.446257,
-          }}
-          calloutAnchor={{
-            x: 0.5,
-            y: -0.2,
-          }}
-        >
-          <Callout tooltip onPress={() => {}}>
-            <CalloutContainer>
-              <CalloutImage source={{ uri: 'https://scontent.fbel5-1.fna.fbcdn.net/v/t1.0-9/120384638_3416916971701102_5980690203222777634_n.jpg?_nc_cat=102&ccb=2&_nc_sid=09cbfe&_nc_ohc=u4SGeWDhBV4AX8aBR1X&_nc_ht=scontent.fbel5-1.fna&oh=18603c666f834c64ddcb8562bdc59116&oe=5FBB24EF' }} />
-              <CalloutText numberOfLines={2}>Lucas Pub</CalloutText>
-            </CalloutContainer>
-          </Callout>
+        {providers.map(provider => {
+          return (
+            <Marker  
+              key={provider.id}
+              icon={mapMarkerImg}
+              coordinate={{
+                latitude: provider.latitude,
+                longitude: provider.longitude,
+              }}
+              calloutAnchor={{
+                x: 0.5,
+                y: -0.2,
+              }}
+            >
+              <Callout tooltip onPress={() => {}}>
+                <CalloutContainer>
+                  <CalloutImage source={{ uri: provider.avatar }} />
+                  <CalloutText numberOfLines={2}>{provider.name}</CalloutText>
+                </CalloutContainer>
+              </Callout>
         </Marker>
+          )
+        })}
 
 
       </MapView>
