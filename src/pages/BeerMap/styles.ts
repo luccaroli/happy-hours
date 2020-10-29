@@ -32,18 +32,18 @@ export const CalloutText = styled.Text`
 `
 export const ListIconContainer = styled(RectButton)`
   position: absolute;
-  bottom: 18px;
   flex-direction: row;
   align-items: center;
   justify-content: center;
   border-radius: 24px;
   padding: 14px;
-  width: 120px;
+  width: 90px;
   background: #282828;
   opacity: 0.8;
+  right: 5%;
 `
 export const ListIconText = styled.Text`
   font-family: 'Poppins_600SemiBold';
   color: #fff;
-  margin-right: 8px;
+  margin-left: 2px;
 `

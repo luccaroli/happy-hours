@@ -16,7 +16,6 @@ const routes = () => {
       <Navigator 
         screenOptions={{ 
           headerShown: false, 
-          cardStyle: { backgroundColor: "#FFC000" } 
           }} 
         >
           <Screen name="Landing" component={Landing} />
