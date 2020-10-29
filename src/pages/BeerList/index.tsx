@@ -3,6 +3,7 @@ import { useNavigation } from '@react-navigation/native'
 import { Feather, Ionicons, Entypo } from '@expo/vector-icons'
 import { View, StyleSheet } from 'react-native'
 import RNPickerSelect from 'react-native-picker-select';
+import qs from 'qs'
 
 import api from '../../services/api'
 
@@ -32,22 +33,31 @@ interface Provider {
   name: string;
   avatar: string;
   beer: string;
-  hours: string
+  hours: string;
   week_days: Array<{
-    id: number;
-    day: number;
-  }>
+    day: string;
+  }>;
 }
 
 const BeerList = () => {
   const [providers, setProviders] = useState<Provider[]>([])
+  const [week_days, setWeekDays] = useState([])
+
 
   useEffect(() => {
     api.get('providers').then(response => {
       setProviders(response.data)
     })
   }, [])
-  
+
+  console.log(providers)
+
+  async function handleSubmit() {
+
+    const response = await api.get(`/providers/?week_days_like=${week_days}`)
+    
+    setProviders(response.data)
+  }
 
   const navigation = useNavigation()
 
@@ -61,38 +71,42 @@ const BeerList = () => {
 
   return (
     <Container>
-      <PageHeader />
-    
-      <SelectContainer>
-
-        <Feather name="filter" color="#282828" size={24} />
-        <InputContainer>
-          <RNPickerSelect
-            style={pickerSelectStyles}
-            Icon={() => {
-              return (
-                <Feather name="chevron-down" color="#282828" size={24} />
-              )
-            }}
-            placeholder={{ label: 'Filtrar por dia, hora'  }}
-            onValueChange={(value) => console.log(value)}
-            items={[
-                { label: 'Domingo', value: 'domingo' },
-                { label: 'Segunda', value: 'segunda' },
-                { label: 'Terça', value: 'terça' },
-                { label: 'Quarta', value: 'Quarta' },
-                { label: 'Quinta', value: 'Quinta' },
-                { label: 'Sexta', value: 'Sexta' },
-                { label: 'Sábado', value: 'Sábado' },
-            ]}
-          />
-        </InputContainer>
-      </SelectContainer>
+      <PageHeader>
+        <SelectContainer>
+          <Feather name="filter" color="#282828" size={24} />
+          <InputContainer>
+            <RNPickerSelect
+              onDonePress={handleSubmit}
+              doneText="Buscar"
+              style={pickerSelectStyles}
+              Icon={() => {
+                return (
+                  <Feather name="chevron-down" color="#282828" size={24} />
+                )
+              }}
+              placeholder={{ label: 'Filtrar por dia' }}
+              onValueChange={(value) => setWeekDays(value)}
+              items={[
+                  { label: 'Domingo', value: 0 },
+                  { label: 'Segunda', value: 1 },
+                  { label: 'Terça', value: 2 },
+                  { label: 'Quarta', value: 3 },
+                  { label: 'Quinta', value: 4 },
+                  { label: 'Sexta', value: 5 },
+                  { label: 'Sábado', value: 6 },
+              ]}
+            />
+          </InputContainer>
+        </SelectContainer>
+      </PageHeader>
       
-      <CardContainer contentContainerStyle={{
-        paddingHorizontal: 16,
-        paddingBottom: 16,
-        }}
+      <CardContainer 
+        showsVerticalScrollIndicator={false}
+        contentContainerStyle={{
+          paddingHorizontal: 16,
+          paddingBottom: 16,
+          maxWidth: "100%"
+          }}
       >
       {providers.map(provider => {
         return (
@@ -105,35 +119,37 @@ const BeerList = () => {
                 left: -29.8 
               }}
             />
-            <CardImageContainer>
-              <CardImage 
-                source={{ uri: provider.avatar }} 
-              />
-            </CardImageContainer>
-
-            <CardInfoContainer>
-              <CardTitleContainer>
-                <CardTitle>{provider.name}</CardTitle>
-              </CardTitleContainer>
-
-              <CardBeer>
-                <Ionicons 
-                  name="md-beer" 
-                  size={14} 
-                  color="#ffc000" 
+              <CardImageContainer>
+                <CardImage 
+                  source={{ uri: provider.avatar }} 
                 />
-                <CardBeerDescription>{provider.beer}</CardBeerDescription>
-              </CardBeer>
-              
-              <CardHour>
-                <Feather 
-                  name="clock" 
-                  size={14} 
-                  color="#ffc000" 
-                />
-                <CardHourDescription>{provider.hours}</CardHourDescription>
-              </CardHour>
-            </CardInfoContainer>
+              </CardImageContainer>
+
+              <CardInfoContainer >
+                <CardTitleContainer>
+                  <CardTitle>{provider.name}</CardTitle>
+                </CardTitleContainer>
+
+                <CardBeer >
+                  <Ionicons 
+                    name="md-beer" 
+                    size={14} 
+                    color="#ffc000" 
+                  />
+                  <CardBeerDescription numberOfLines={2}>
+                    {provider.beer}
+                  </CardBeerDescription>
+                </CardBeer>
+                
+                <CardHour>
+                  <Feather 
+                    name="clock" 
+                    size={14} 
+                    color="#ffc000" 
+                  />
+                  <CardHourDescription>{provider.hours}</CardHourDescription>
+                </CardHour>
+              </CardInfoContainer>
           </CardContent>
         )
       })}

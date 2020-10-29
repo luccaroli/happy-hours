@@ -1,6 +1,8 @@
 import React from 'react';
 import { Feather  } from '@expo/vector-icons'
 import { useNavigation } from '@react-navigation/native'
+import { View } from 'react-native';
+
 
 import beerImg from '../../images/beer.png'
 
@@ -12,9 +14,10 @@ import {
   Title,
   HappyFilter,
 } from './styles'
-import { View } from 'react-native';
 
-const PageHeader = () => {
+
+
+const PageHeader: React.FC = ({ children }) => {
   const navigation = useNavigation()
 
   function handleGoBack() {
@@ -35,6 +38,8 @@ const PageHeader = () => {
         <Title>Happy Hours{'\n'}Disponíveis na cidade</Title>
         <View />
       </HappyFilter>
+
+      {children}
     </Header>
   )
 }

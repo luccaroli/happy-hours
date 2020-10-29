@@ -37,4 +37,5 @@ export const Title = styled.Text`
   color: #282828;
   font-size: 24px;
   line-height: 32px;
+  top: 12px;
 ` 

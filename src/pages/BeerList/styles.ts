@@ -8,11 +8,9 @@ export const Container = styled.View`
 `;
 
 export const SelectContainer = styled.View`
-  position: absolute;
   align-items: center;
   flex-direction: row;
   margin-bottom: 34px;
-  top: 30%;
   padding: 0 15px;
 `
 
@@ -45,6 +43,10 @@ export const CardImageContainer = styled.View`
   box-shadow: 4px 4px 3px rgba(0, 0, 0, 0.2);
 `
 
+export const CardInfoContainer = styled.View`
+  width: 70%;
+`
+
 export const CardTitleContainer = styled.View`
   margin-bottom: 6px;
 `
@@ -63,7 +65,6 @@ export const CardBeerDescription = styled.Text`
   color: #fff;
   font-family: 'RobotoSlab_400Regular';
   left: 8px;
-
 `
 export const CardHour = styled.View`
   flex-direction: row;
@@ -77,9 +78,6 @@ export const CardHourDescription = styled.Text`
 
 `
 
-export const CardInfoContainer = styled.View`
-
-`
 export const MapIconContainer = styled(RectButton)`
   flex-direction: row;
   align-items: center;
