@@ -6,7 +6,7 @@ import Landing from '../pages/Landing';
 import BeerList from '../pages/BeerList';
 import BeerDetails from '../pages/BeerDetails';
 import Header from '../components/Header';
-import BeerMap from '../pages/BeerMap';
+import BeerMap  from '../pages/BeerMap'
 
 const { Navigator, Screen } = createStackNavigator()
 
