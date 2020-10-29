@@ -40,12 +40,12 @@ export const ListIconContainer = styled(RectButton)`
   border-radius: 24px;
   padding: 14px;
   width: 90px;
-  background: #282828;
+  background: #ffc000;
   opacity: 0.8;
-  right: 5%;
+  bottom: 23%;
 `
 export const ListIconText = styled.Text`
   font-family: 'Poppins_600SemiBold';
-  color: #fff;
+  color: #282828;
   margin-left: 2px;
 `

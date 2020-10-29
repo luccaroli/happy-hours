@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react'
-import { StyleSheet, Dimensions, StatusBar, ScrollView, Image, Text, View, Animated } from 'react-native'
+import { StyleSheet, Dimensions, StatusBar, Image, Text, View, Animated } from 'react-native'
 import MapView, { Callout, Marker, PROVIDER_GOOGLE } from 'react-native-maps'
 import { Entypo, Ionicons, Feather } from '@expo/vector-icons'
 import { useNavigation } from '@react-navigation/native'
@@ -129,15 +129,20 @@ const BeerMap: React.FC = () => {
     loandPosition()
   }, [])
 
-  function handleGoBack() {
-    navigation.goBack()
-  }
 
   useEffect(() => {
     api.get('providers').then(response => {
       setProviders(response.data)
     })
   }, [])
+
+  function handleGoBack() {
+    navigation.goBack()
+  }
+
+  function navigateToBeerDetails(id: number) {
+    navigation.navigate('BeerDetails', { id })
+  }
 
   return (
     <Container>
@@ -183,7 +188,7 @@ const BeerMap: React.FC = () => {
                   <Animated.Image source={mapMarkerImg} style={scaleStyle} />
                 </Animated.View>
               
-                <Callout tooltip onPress={() => {}}>
+                <Callout tooltip onPress={() => navigateToBeerDetails(provider.id)}>
                   <CalloutContainer>
                     <CalloutImage source={{ uri: provider.avatar }} />
                     <CalloutText numberOfLines={2}>{provider.name}</CalloutText>
@@ -197,7 +202,7 @@ const BeerMap: React.FC = () => {
        )}
 
       <ListIconContainer onPress={handleGoBack}>
-        <Entypo name="list" size={20} color="#fff" />
+        <Entypo name="list" size={20} color="#282828" />
         <ListIconText>Lista</ListIconText>
       </ListIconContainer>
 
