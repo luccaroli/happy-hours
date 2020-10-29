@@ -3,7 +3,6 @@ import { useNavigation } from '@react-navigation/native'
 import { Feather, Ionicons, Entypo } from '@expo/vector-icons'
 import { View, StyleSheet } from 'react-native'
 import RNPickerSelect from 'react-native-picker-select';
-import qs from 'qs'
 
 import api from '../../services/api'
 
