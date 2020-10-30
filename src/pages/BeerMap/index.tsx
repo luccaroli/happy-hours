@@ -4,8 +4,11 @@ import MapView, { Callout, Marker, PROVIDER_GOOGLE } from 'react-native-maps'
 import { Entypo, Ionicons, Feather } from '@expo/vector-icons'
 import { useNavigation } from '@react-navigation/native'
 import * as Location from 'expo-location'
+import LottieView from 'lottie-react-native';
+
 import api from '../../services/api'
 
+import mapLoading from '../../images/map-location.json'
 import mapMarkerImg from '../../images/beer.png'
 import mapStyleDark from '../../utils/map-dark-mode'
 
@@ -45,6 +48,7 @@ const BeerMap: React.FC = () => {
   const [providers, setProviders] = useState<Providers[]>([])
   const [initialPosition, setInitialPosition] = useState<[number, number]>([0, 0])
   const navigation = useNavigation()
+  const [loanding, setLoading] = useState(true)
 
   let mapIndex = 0
   let mapAnimation = new Animated.Value(0);
@@ -127,12 +131,18 @@ const BeerMap: React.FC = () => {
     }
     
     loandPosition()
+    setTimeout(() => {
+      setLoading(!loanding)
+    }, 2000);
   }, [])
 
 
   useEffect(() => {
     api.get('providers').then(response => {
       setProviders(response.data)
+      // setTimeout(() => {
+      //   setLoading(!loanding)
+      // }, 2000);
     })
   }, [])
 
@@ -144,121 +154,153 @@ const BeerMap: React.FC = () => {
     navigation.navigate('BeerDetails', { id })
   }
 
-  return (
-    <Container>
-      <StatusBar animated barStyle="light-content" />
-
-      { initialPosition[0] !== 0 && (
-        <MapView
-          ref={_map}
-          showsUserLocation
-          loadingEnabled
-          customMapStyle={mapStyleDark}
-          provider={PROVIDER_GOOGLE}
-          style={styles.map}
-          initialRegion={{
-            latitude:  initialPosition[0],
-            longitude: initialPosition[1],
-            latitudeDelta: 0.008,
-            longitudeDelta: 0.008,
+  if (loanding) {
+    return (
+      <View 
+        style={{ 
+          flex: 1, 
+          justifyContent: 'center', 
+          alignItems: 'center', 
+          backgroundColor: '#282828' 
+        }}
+        >
+        <LottieView 
+          style={{ width: 300, height: 300 }}
+          source={mapLoading}
+          resizeMode="contain"
+          autoPlay
+          loop
+          autoSize
+        />
+        <Text
+          style={{
+            fontFamily: 'Poppins_600SemiBold',
+            color: '#fff'
           }}
-        > 
-          {providers.map((provider, index) => {
-             const scaleStyle = {
-              transform: [
-                {
-                  scale: interpolations[index].scale
-                }
-              ]
-            }
+        >
+          Carregando seus pubs no mapa...
+        </Text>
+        <StatusBar animated barStyle="light-content" />
 
-            return (
-              <Marker
-                key={provider.id}
-                coordinate={{
-                  latitude: provider.latitude,
-                  longitude: provider.longitude,
-                }}
-                calloutAnchor={{
-                  x: 0.5,
-                  y: -0.2,
-                }}
-              >
-                <Animated.View style={styles.markerWrap}>
-                  <Animated.Image source={mapMarkerImg} style={scaleStyle} />
-                </Animated.View>
-              
-                <Callout tooltip onPress={() => navigateToBeerDetails(provider.id)}>
-                  <CalloutContainer>
-                    <CalloutImage source={{ uri: provider.avatar }} />
-                    <CalloutText numberOfLines={2}>{provider.name}</CalloutText>
-                  </CalloutContainer>
-                </Callout>
-              </Marker>
-            )
-          })}
+      </View>
+    )
+  } 
+  else {
 
-        </MapView>
-       )}
+    return (
+      <Container>
+        <StatusBar animated barStyle="light-content" />
 
-      <ListIconContainer onPress={handleGoBack}>
-        <Entypo name="list" size={20} color="#282828" />
-        <ListIconText>Lista</ListIconText>
-      </ListIconContainer>
+        { initialPosition[0] !== 0 && (
+          <MapView
+            ref={_map}
+            showsUserLocation
+            loadingEnabled
+            customMapStyle={mapStyleDark}
+            provider={PROVIDER_GOOGLE}
+            style={styles.map}
+            initialRegion={{
+              latitude:  initialPosition[0],
+              longitude: initialPosition[1],
+              latitudeDelta: 0.008,
+              longitudeDelta: 0.008,
+            }}
+          > 
+            {providers.map((provider, index) => {
+              const scaleStyle = {
+                transform: [
+                  {
+                    scale: interpolations[index].scale
+                  }
+                ]
+              }
+              return (
+                <Marker
+                  key={provider.id}
+                  coordinate={{
+                    latitude: provider.latitude,
+                    longitude: provider.longitude,
+                  }}
+                  calloutAnchor={{
+                    x: 0.5,
+                    y: -0.2,
+                  }}
+                >
+                  <Animated.View style={styles.markerWrap}>
+                    <Animated.Image source={mapMarkerImg} style={scaleStyle} />
+                  </Animated.View>
+                
+                  <Callout tooltip onPress={() => navigateToBeerDetails(provider.id)}>
+                    <CalloutContainer>
+                      <CalloutImage source={{ uri: provider.avatar }} />
+                      <CalloutText numberOfLines={2}>{provider.name}</CalloutText>
+                    </CalloutContainer>
+                  </Callout>
+                </Marker>
+              )
+            })}
+          </MapView>
+        )}
+        
 
-      <Animated.ScrollView
-        horizontal
-        scrollEventThrottle={1}
-        showsHorizontalScrollIndicator={false}
-        style={styles.scrollView}
-        pagingEnabled
-        snapToAlignment="center"
-        snapToInterval={CARD_WIDTH + 20}
-        onScroll={Animated.event(
-          [
-            {
-              nativeEvent: {
-                contentOffset: {
-                  x: mapAnimation
+        <ListIconContainer onPress={handleGoBack}>
+          <Entypo name="list" size={20} color="#282828" />
+          <ListIconText>Lista</ListIconText>
+        </ListIconContainer>
+
+        <Animated.ScrollView
+          horizontal
+          scrollEventThrottle={1}
+          showsHorizontalScrollIndicator={false}
+          style={styles.scrollView}
+          pagingEnabled
+          snapToAlignment="center"
+          snapToInterval={CARD_WIDTH + 20}
+          onScroll={Animated.event(
+            [
+              {
+                nativeEvent: {
+                  contentOffset: {
+                    x: mapAnimation
+                  }
                 }
               }
-            }
-          ],
-          {useNativeDriver: true}
-        )}
-      > 
-       {providers.map((provider, index) => {
-         return (
-          <View
-            key={provider.id}
-            style={styles.card}
-          >
-            <View style={styles.textContent}>
-              <Text numberOfLines={1} style={styles.cardTitle}>{provider.name}</Text>
-
-              <View style={{ flexDirection: 'row', alignItems: 'center' }}>
-                <Feather name="clock" size={14} color="#ffc000" /> 
-                <Text style={styles.cardHours}>{provider.hours}</Text>
-              </View>
-
-              <View style={styles.cardInfosBeer}>
-                <Ionicons name="md-beer" size={14} color="#ffc000" /> 
-                <Text numberOfLines={2} style={styles.cardBeer}>{provider.beer}</Text>
-              </View>
-            </View>
-
-            <Image 
-              resizeMode="cover"
-              source={{ uri: provider.avatar}} 
-              style={styles.cardImage}
-            />
-          </View>
+            ],
+            {useNativeDriver: true}
           )}
-         )
-       }
-      </Animated.ScrollView>
-    </Container>
-  )
+        > 
+        {providers.map((provider, index) => {
+          return (
+            <View
+              key={provider.id}
+              style={styles.card}
+            >
+              <View style={styles.textContent}>
+                <Text numberOfLines={1} style={styles.cardTitle}>{provider.name}</Text>
+
+                <View style={{ flexDirection: 'row', alignItems: 'center' }}>
+                  <Feather name="clock" size={14} color="#ffc000" /> 
+                  <Text style={styles.cardHours}>{provider.hours}</Text>
+                </View>
+
+                <View style={styles.cardInfosBeer}>
+                  <Ionicons name="md-beer" size={14} color="#ffc000" /> 
+                  <Text numberOfLines={2} style={styles.cardBeer}>{provider.beer}</Text>
+                </View>
+              </View>
+
+              <Image 
+                resizeMode="cover"
+                source={{ uri: provider.avatar}} 
+                style={styles.cardImage}
+              />
+            </View>
+            )}
+          )
+        }
+        </Animated.ScrollView>
+      </Container>
+    )}
 }
 export default BeerMap
 

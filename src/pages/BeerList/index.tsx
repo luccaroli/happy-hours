@@ -1,10 +1,13 @@
 import React, {useEffect, useState} from 'react';
 import { useNavigation } from '@react-navigation/native'
 import { Feather, Ionicons, Entypo } from '@expo/vector-icons'
-import { View, StyleSheet } from 'react-native'
+import { View, StyleSheet, Text } from 'react-native'
 import RNPickerSelect from 'react-native-picker-select';
+import LottieView from 'lottie-react-native';
 
 import api from '../../services/api'
+
+import beerLoading from '../../images/beer.json'
 
 import PageHeader from '../../components/PageHeader'
 
@@ -41,15 +44,17 @@ interface Provider {
 const BeerList = () => {
   const [providers, setProviders] = useState<Provider[]>([])
   const [week_days, setWeekDays] = useState([])
+  const [loanding, setLoading] = useState(true)
 
 
   useEffect(() => {
     api.get('providers').then(response => {
       setProviders(response.data)
+      setTimeout(() => {
+        setLoading(!loanding)
+      }, 2000);
     })
   }, [])
-
-  console.log(providers)
 
   async function handleSubmit() {
 
@@ -68,99 +73,124 @@ const BeerList = () => {
     navigation.navigate('BeerMap')
   }
 
-  return (
-    <Container>
-      <PageHeader>
-        <SelectContainer>
-          <Feather name="filter" color="#282828" size={24} />
-          <InputContainer>
-            <RNPickerSelect
-              onDonePress={handleSubmit}
-              doneText="Buscar"
-              style={pickerSelectStyles}
-              Icon={() => {
-                return (
-                  <Feather name="chevron-down" color="#282828" size={24} />
-                )
-              }}
-              placeholder={{ label: 'Filtrar por dia' }}
-              onValueChange={(value) => setWeekDays(value)}
-              items={[
-                  { label: 'Domingo', value: 0 },
-                  { label: 'Segunda', value: 1 },
-                  { label: 'Terça', value: 2 },
-                  { label: 'Quarta', value: 3 },
-                  { label: 'Quinta', value: 4 },
-                  { label: 'Sexta', value: 5 },
-                  { label: 'Sábado', value: 6 },
-              ]}
-            />
-          </InputContainer>
-        </SelectContainer>
-      </PageHeader>
-      
-      <CardContainer 
-        showsVerticalScrollIndicator={false}
-        contentContainerStyle={{
-          paddingHorizontal: 16,
-          paddingBottom: 16,
-          maxWidth: "100%"
+  if (loanding) {
+    return (
+      <View 
+        style={{ flex: 1, justifyContent: 'center', alignItems: 'center', backgroundColor: '#ffc000' }}>
+        <LottieView 
+          style={{ width: 300, height: 300 }}
+          source={beerLoading}
+          resizeMode="contain"
+          autoPlay
+          loop
+          autoSize
+        />
+        <Text
+          style={{
+            fontFamily: 'Poppins_600SemiBold',
+            color: '#282828'
           }}
-      >
-      {providers.map(provider => {
-        return (
-          <CardContent  key={provider.id} onPress={() => handleNavigateToBeerDetails(provider.id)}>
-            <View 
-              style={{ 
-                width: 2, 
-                height: 80, 
-                backgroundColor: "#ffc000", 
-                left: -29.8 
-              }}
-            />
-              <CardImageContainer>
-                <CardImage 
-                  source={{ uri: provider.avatar }} 
-                />
-              </CardImageContainer>
+        >
+          Carregando seus pubs...
+        </Text>
+      </View>
+    )
+  } 
+  else {
 
-              <CardInfoContainer >
-                <CardTitleContainer>
-                  <CardTitle>{provider.name}</CardTitle>
-                </CardTitleContainer>
-
-                <CardBeer >
-                  <Ionicons 
-                    name="md-beer" 
-                    size={14} 
-                    color="#ffc000" 
+    return (
+      <Container>
+        <PageHeader>
+          <SelectContainer>
+            <Feather name="filter" color="#282828" size={24} />
+            <InputContainer>
+              <RNPickerSelect
+                onDonePress={handleSubmit}
+                doneText="Buscar"
+                style={pickerSelectStyles}
+                Icon={() => {
+                  return (
+                    <Feather name="chevron-down" color="#282828" size={24} />
+                  )
+                }}
+                placeholder={{ label: 'Filtrar por dia' }}
+                onValueChange={(value) => setWeekDays(value)}
+                items={[
+                    { label: 'Domingo', value: 0 },
+                    { label: 'Segunda', value: 1 },
+                    { label: 'Terça', value: 2 },
+                    { label: 'Quarta', value: 3 },
+                    { label: 'Quinta', value: 4 },
+                    { label: 'Sexta', value: 5 },
+                    { label: 'Sábado', value: 6 },
+                ]}
+              />
+            </InputContainer>
+          </SelectContainer>
+        </PageHeader>
+        
+        <CardContainer 
+          showsVerticalScrollIndicator={false}
+          contentContainerStyle={{
+            paddingHorizontal: 16,
+            paddingBottom: 16,
+            maxWidth: "100%"
+            }}
+        >
+        {providers.map(provider => {
+          return (
+            <CardContent  key={provider.id} onPress={() => handleNavigateToBeerDetails(provider.id)}>
+              <View 
+                style={{ 
+                  width: 2, 
+                  height: 80, 
+                  backgroundColor: "#ffc000", 
+                  left: -29.8 
+                }}
+              />
+                <CardImageContainer>
+                  <CardImage 
+                    source={{ uri: provider.avatar }} 
                   />
-                  <CardBeerDescription numberOfLines={2}>
-                    {provider.beer}
-                  </CardBeerDescription>
-                </CardBeer>
-                
-                <CardHour>
-                  <Feather 
-                    name="clock" 
-                    size={14} 
-                    color="#ffc000" 
-                  />
-                  <CardHourDescription>{provider.hours}</CardHourDescription>
-                </CardHour>
-              </CardInfoContainer>
-          </CardContent>
-        )
-      })}
-      </CardContainer>
-      
-      <MapIconContainer onPress={handleNavigateToBeerMap}>
-        <MapIconText>Mapa</MapIconText>
-        <Entypo name="map" size={20} color="#fff" />
-      </MapIconContainer>
+                </CardImageContainer>
 
-    </Container>
-  )
+                <CardInfoContainer >
+                  <CardTitleContainer>
+                    <CardTitle>{provider.name}</CardTitle>
+                  </CardTitleContainer>
+
+                  <CardBeer >
+                    <Ionicons 
+                      name="md-beer" 
+                      size={14} 
+                      color="#ffc000" 
+                    />
+                    <CardBeerDescription numberOfLines={2}>
+                      {provider.beer}
+                    </CardBeerDescription>
+                  </CardBeer>
+                  
+                  <CardHour>
+                    <Feather 
+                      name="clock" 
+                      size={14} 
+                      color="#ffc000" 
+                    />
+                    <CardHourDescription>{provider.hours}</CardHourDescription>
+                  </CardHour>
+                </CardInfoContainer>
+            </CardContent>
+          )
+        })}
+        </CardContainer>
+        
+        <MapIconContainer onPress={handleNavigateToBeerMap}>
+          <MapIconText>Mapa</MapIconText>
+          <Entypo name="map" size={20} color="#fff" />
+        </MapIconContainer>
+    
+      </Container>
+    )}
 }
 
 const pickerSelectStyles = StyleSheet.create({
