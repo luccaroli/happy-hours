@@ -1,8 +1,11 @@
 import React, { useEffect, useState } from 'react';
 import { Feather } from '@expo/vector-icons'
-import { StyleSheet, Image, ScrollView, Dimensions, View } from 'react-native'
+import { StyleSheet, Image, ScrollView, Dimensions, View, Linking, StatusBar } from 'react-native'
 import MapView, { Marker, PROVIDER_GOOGLE } from 'react-native-maps';
 import { useRoute } from '@react-navigation/native';
+import LottieView from 'lottie-react-native';
+
+import iconLoading from '../../images/loading.json'
 
 import api from '../../services/api';
 
@@ -22,6 +25,7 @@ import {
   RoutesContainer,
   RoutesText,
 } from './styles';
+
 
 interface BeerDetailsRouteParams {
   id: number;
@@ -53,16 +57,35 @@ const BeerDetails = () => {
     })
   }, [params.id])
 
+  function handleGoogleMapsRoutes() {
+    Linking.openURL(`https://www.google.com/maps/dir/?api=1&destination=${provider?.latitude},${provider?.longitude}`)
+  }
+
   if (!provider) {
     return (
-      <View style={{ alignItems: 'center', justifyContent: 'center' }}>
-        <Description>Carregando...</Description>
+      <View style={{ 
+        flex: 1, 
+        alignItems: 'center', 
+        justifyContent: 'center',  
+        backgroundColor: '#4f4f4f'
+        }}
+      >
+         <LottieView 
+          style={{ width: 300, height: 300 }}
+          source={iconLoading}
+          resizeMode="contain"
+          autoPlay
+          loop
+          autoSize
+        />
       </View>
     )
   }
 
   return (
     <Container>
+      <StatusBar animated barStyle="dark-content" />
+
       <ImagesContainer>
         <ScrollView horizontal pagingEnabled>
           {provider.images.map(image => {
@@ -114,7 +137,7 @@ const BeerDetails = () => {
             />
           </MapView>
 
-          <RoutesContainer>
+          <RoutesContainer onPress={handleGoogleMapsRoutes}>
             <RoutesText>Ver rotas no Google Maps</RoutesText>
           </RoutesContainer>
         </MapContainer>
