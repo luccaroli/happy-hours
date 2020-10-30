@@ -140,9 +140,6 @@ const BeerMap: React.FC = () => {
   useEffect(() => {
     api.get('providers').then(response => {
       setProviders(response.data)
-      // setTimeout(() => {
-      //   setLoading(!loanding)
-      // }, 2000);
     })
   }, [])
 

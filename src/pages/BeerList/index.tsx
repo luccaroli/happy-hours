@@ -76,7 +76,13 @@ const BeerList = () => {
   if (loanding) {
     return (
       <View 
-        style={{ flex: 1, justifyContent: 'center', alignItems: 'center', backgroundColor: '#ffc000' }}>
+        style={{ 
+          flex: 1, 
+          justifyContent: 'center', 
+          alignItems: 'center', 
+          backgroundColor: '#ffc000' 
+          }}
+        >
         <LottieView 
           style={{ width: 300, height: 300 }}
           source={beerLoading}
